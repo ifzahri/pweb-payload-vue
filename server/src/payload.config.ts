@@ -10,8 +10,8 @@ import { buildConfig } from 'payload/config'
 
 export default buildConfig({
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
-  cors: [],
-  csrf: [],
+  cors: ['http://localhost:5173'],
+  csrf: ['http://localhost:5173'],
   admin: {
     user: Users.slug,
     bundler: webpackBundler(),
