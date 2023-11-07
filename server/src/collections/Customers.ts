@@ -3,7 +3,15 @@ import { CollectionConfig } from "payload/types";
 
 const Customers: CollectionConfig = {
     slug: "customers",
-    auth: true,
+    auth: {
+        cookies: {
+            sameSite: "strict",
+            secure: true,
+        },
+    },
+    access: {
+        create: ()=> true
+    },
     admin: {
         useAsTitle: "email",
     },

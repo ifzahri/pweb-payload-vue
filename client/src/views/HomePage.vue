@@ -7,15 +7,13 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Home</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
       <div id="container">
-        <strong>PayloadCMS + Vue</strong>
-        <p>Welcome</p>
+        Welcome, {{ currentUser }}
+        <form @submit.prevent="logout">
+          <div class="ion-text-center">
+            <ion-button type="submit" fill="clear">Logout</ion-button>
+          </div>
+        </form>
       </div>
     </ion-content>
   </ion-page>
@@ -23,6 +21,62 @@
 
 <script setup lang="ts">
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const currentUser = ref();
+const router = useRouter();
+
+onMounted(async () => {
+  currentUser.value = await getUser();
+  if (!currentUser) {
+    router.replace("/signin")
+  }
+});
+
+const getUser = async () => {
+  try {
+    const resp = await fetch("http://localhost:3100/api/customers/me", {
+      method: "GET",
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    if (!resp.ok) {
+      const errorMsg = (await resp.json())?.errors[0].message;
+      throw new Error(errorMsg);
+    }
+    const user = (await resp.json())?.user.full_name;
+    console.log(user);
+    return user;
+
+  } catch (error: any) {
+    alert("Sign In Error " + error.message);
+  }
+};
+
+const logout = async () => {
+  try {
+    const resp = await fetch("http://localhost:3100/api/customers/logout", {
+      method: "POST",
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+
+    if (!resp.ok) {
+      const errorMsg = (await resp.json())?.errors[0].message;
+      throw new Error(errorMsg);
+    }
+
+    router.replace("/signin");
+  } catch (error: any) {
+    alert("Log Out Error " + error.message);
+  }
+};
 </script>
 
 <style scoped>

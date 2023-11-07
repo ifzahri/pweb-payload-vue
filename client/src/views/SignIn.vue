@@ -9,7 +9,7 @@
     <ion-content :fullscreen="true">
       <h3 style="margin-left: 16px">Sign In</h3>
       <ion-list :inset="true">
-        <form @submit.prevent="handleLogin">
+        <form @submit.prevent="userLogin">
           <ion-item>
             <ion-input
               v-model="email"
@@ -64,7 +64,7 @@ const email = ref("");
 const password = ref("");
 const router = useIonRouter();
 
-const handleLogin = async () => {
+const userLogin = async () => {
   try {
     const resp = await fetch("http://localhost:3100/api/customers/login", {
       method: "POST",
@@ -85,7 +85,6 @@ const handleLogin = async () => {
     const user = await resp.json();
     console.log(user);
 
-    // goto home
     router.replace("/home");
   } catch (error: any) {
     alert("Sign In Error " + error.message);
